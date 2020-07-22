@@ -20,12 +20,14 @@ import com.google.firebase.database.ValueEventListener;
 
 import com.example.loginpage3.Model.User;
 
+import java.util.jar.Attributes;
+
 public class login extends AppCompatActivity {
     //Firebase
     FirebaseDatabase database;
     DatabaseReference users;
 
-    EditText txtUsername, txtPassword, phoneNumber;
+    EditText txtUsername, txtPassword, txtPhoneNo;
     Button btnSignIn, btnRegister;
 
     @Override
@@ -38,7 +40,6 @@ public class login extends AppCompatActivity {
 
         txtUsername = findViewById(R.id.txtUsername);
         txtPassword = findViewById(R.id.txtPassword);
-        phoneNumber = findViewById(R.id.txtPhoneNo);
 
         btnSignIn = findViewById(R.id.btnSignIn);
         btnRegister = findViewById(R.id.btnRegister);
@@ -54,12 +55,12 @@ public class login extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signIn(txtUsername.getText().toString(), txtPassword.getText().toString(), phoneNumber.getText().toString());
+                signIn(txtUsername.getText().toString(), txtPassword.getText().toString());
             }
         });
     }
 
-    private void signIn(final String username, final String password, final String phoneNumber) {
+    private void signIn(final String username, final String password) {
 
         users.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -67,8 +68,9 @@ public class login extends AppCompatActivity {
                 if(dataSnapshot.child(username).exists()){
                     User login = dataSnapshot.child(username).getValue(User.class);
                     if(login.getPassword().equals(password)){
+                        Toast.makeText(login.this, "Login Successful", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getApplicationContext(), otp.class);
-                        intent.putExtra("phoneNumber", phoneNumber);
+                        intent.putExtra("username",username);
                         startActivity(intent);
                     }
                     else

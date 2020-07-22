@@ -3,6 +3,7 @@ package com.example.loginpage3;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -23,14 +24,25 @@ import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.concurrent.TimeUnit;
 
+import com.example.loginpage3.Model.User;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 public class otp extends AppCompatActivity {
+
+    FirebaseDatabase database;
+    DatabaseReference users;
 
     String verificationCodeBySystem;
     Button btnVerify;
     EditText txtOtp;
-    TextView Counter;
+    TextView CountTime;
     ProgressBar progressBar;
     CountDownTimer CountDownTimer;
+    int counter;
 
 
     @Override
@@ -41,14 +53,18 @@ public class otp extends AppCompatActivity {
         btnVerify = findViewById(R.id.btnVerify);
         txtOtp = findViewById(R.id.txtOtp);
         progressBar = findViewById(R.id.progressBar);
-        Counter = findViewById(R.id.Counter);
+        CountTime = findViewById(R.id.CountTime);
 
-        progressBar.setVisibility(View.VISIBLE);
+        database = FirebaseDatabase.getInstance();
+        users = database.getReference("Users");
 
-        CountDownTimer = new CountDownTimer(30000, 1000) {
+        //progressBar.setVisibility(View.VISIBLE);
+
+        /*CountDownTimer = new CountDownTimer(30000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-
+                CountTime.setText(String.valueOf(counter));
+                counter++;
             }
 
             @Override
@@ -56,12 +72,29 @@ public class otp extends AppCompatActivity {
                 Toast.makeText(otp.this, "Try Again Later!", Toast.LENGTH_SHORT).show();
                 System.exit(0);
             }
-        }.start();
+        }.start();*/
+        final String username = getIntent().getStringExtra("username");
+
+        final DatabaseReference databaseReference = database.getReference("Users");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                    if(dataSnapshot.child("username").getValue(String.class).contains(username)) {
+                        String phoneNumber = dataSnapshot.child("phoneNo").getValue().toString();
+                        sendVerificationCodeToUser(phoneNumber);
+                    }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+        });
 
 
-        String phoneNumber = getIntent().getStringExtra("phoneNumber");
 
-        sendVerificationCodeToUser(phoneNumber);
     }
 
     private void sendVerificationCodeToUser(String phoneNumber) {
@@ -113,7 +146,9 @@ public class otp extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if (task.isSuccessful()){
-                            Toast.makeText(otp.this, "Sign In Successful", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(otp.this, "Sign In Successful", Toast.LENGTH_SHORT).show();
+                            Intent s = new Intent(getApplicationContext(), dashboardActivity.class);
+                            startActivity(s);
                         }
                         else
                             System.exit(0);
