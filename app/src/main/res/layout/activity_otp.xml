@@ -61,7 +61,7 @@
         android:layout_marginBottom="-106dp" />
 
     <TextView
-        android:id="@+id/CountTime"
+        android:id="@+id/Counter"
         android:layout_width="72dp"
         android:layout_height="68dp"
         android:layout_alignBottom="@+id/txtOtp"

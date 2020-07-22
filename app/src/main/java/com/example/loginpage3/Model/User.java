@@ -16,9 +16,6 @@ public class User {
         this.phoneNo = phoneNo;
     }
 
-    public User(String toString) {
-    }
-
     public String getUsername() {
         return username;
     }

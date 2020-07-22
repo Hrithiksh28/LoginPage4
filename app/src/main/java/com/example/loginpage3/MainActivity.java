@@ -56,12 +56,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final User user = new User(txtUsername.getText().toString() ,txtPassword.getText().toString(),txtPhoneNo.getText().toString());
-                String Name = txtUsername.getText().toString();
-                String phoneNumber = txtPhoneNo.getText().toString();
-
-                DatabaseReference databaseReference = database.getReference("Users").child(Name);
-                databaseReference.child("username").setValue(Name);
-                databaseReference.child("phoneNo").setValue(phoneNumber);
 
                 users.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -71,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
                         else {
                             users.child(user.getUsername()).setValue(user);
                             Toast.makeText(MainActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
-
                         }
                     }
 
@@ -79,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
-
                 });
             }
         });
